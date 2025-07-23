@@ -1,4 +1,4 @@
-#include "Miner weeper.hpp"
+#include "MinerWeeper.hpp"
 int main() {
     int n = 0, m = 0, k = 0, g;
     cout << "8x8 - noob" << "\n" << "16x16 - fan" << "\n" << "30x16 - pro";
@@ -14,6 +14,7 @@ int main() {
             n = 30, m = 16, k = 99;
             break;
     }
-    RenderWindow window(VideoMode(), "Mines weeper", Style::Fullscreen);
+
+    RenderWindow window(VideoMode(1920, 1080), "Mines weeper");
     mines_weeper obj(n, m, k, window);
 }

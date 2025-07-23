@@ -1,7 +1,8 @@
-#include "Miner weeper.hpp"
-inline bool operator == (Mouse a, Sprite b) {
-    return a.getPosition().x > b.getPosition().x && a.getPosition().x < b.getPosition().x + 32
-        && a.getPosition().y > b.getPosition().y && a.getPosition().y < b.getPosition().y + 32;
+#include "MinerWeeper.hpp"
+inline bool isMouseOver(const RenderWindow& window, const Sprite& sprite) {
+    Vector2i mousePos = Mouse::getPosition(window);
+    return mousePos.x > sprite.getPosition().x && mousePos.x < sprite.getPosition().x + 32
+        && mousePos.y > sprite.getPosition().y && mousePos.y < sprite.getPosition().y + 32;
 }
 void mines_weeper::init() {
     w.resize(n, vector<bool>(m, false));
@@ -11,13 +12,15 @@ void mines_weeper::init() {
     b.resize(n, vector<Sprite>(m));
 }
 void mines_weeper::load() {
-    t.loadFromFile("/Library/Frameworks/Python.framework/Versions/3.12/bin/miner-weeper/miner-weeper/images/smile.bmp");
-    tex.loadFromFile("/Library/Frameworks/Python.framework/Versions/3.12/bin/miner-weeper/miner-weeper/images/tiles.png");
-    font.loadFromFile("/Library/Frameworks/Python.framework/Versions/3.12/bin/miner-weeper/miner-weeper/images/Samson.ttf");
+    t.loadFromFile("images/smile.bmp");
+    tex.loadFromFile("images/tiles.png");
+    font.loadFromFile("images/Samson.ttf");
     smile.setTexture(t);
-    smile.setPosition(960, 10);
-    text.setPosition(10, 0);
-    text1.setPosition(1800, 0);
+    // Позиционируем элементы интерфейса в зависимости от размера окна
+    float centerX = window.getSize().x / 2;
+    smile.setPosition(centerX - 16, 10); // 16 - половина ширины смайлика
+    text.setPosition(10, 10);
+    text1.setPosition(window.getSize().x - 100, 10);
     text.setFont(font);
     text1.setFont(font);
     text.setCharacterSize(50);
@@ -120,10 +123,10 @@ void mines_weeper::game_instructions() {
         game = false, text.setString("WIN!");
 }
 void mines_weeper::left_click() {
-    if (u.isButtonPressed(u.Left) && game)
+    if (Mouse::isButtonPressed(Mouse::Left) && game)
         for (int i = 0; i < b.size(); ++i)
             for (int j = 0; j < b[i].size(); ++j)
-                if (u == b[i][j] && !f[i][j]) {
+                if (isMouseOver(window, b[i][j]) && !f[i][j]) {
                     f[i][j] = true;
                     if (a[i][j] >= 0)
                         b[i][j].setTextureRect(num[a[i][j]].getTextureRect());
@@ -135,17 +138,17 @@ void mines_weeper::left_click() {
                 }
 }
 void mines_weeper::right_click() {
-    if (u.isButtonPressed(u.Right) && game)
+    if (Mouse::isButtonPressed(Mouse::Right) && game)
         for (int i = 0; i < b.size(); ++i)
             for (int j = 0; j < b[i].size(); ++j)
-                if (u == b[i][j] && !f[i][j] && !w[i][j]) {
+                if (isMouseOver(window, b[i][j]) && !f[i][j] && !w[i][j]) {
                     w[i][j] = true;
                     b[i][j].setTextureRect(num[nume - 2].getTextureRect());
                 }
 }
 void mines_weeper::game_restart(mt19937_64 gen) {
-    if (!game && u.isButtonPressed(u.Left))
-        if (u == smile) {
+    if (!game && Mouse::isButtonPressed(Mouse::Left))
+        if (isMouseOver(window, smile)) {
             game = true, cnty = cntyt, cntt = k, y = false;
             a.clear(), a.resize(n, vector<int>(m, 0));
             f.clear(), f.resize(n, vector<bool>(m, false));

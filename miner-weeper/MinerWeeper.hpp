@@ -18,7 +18,6 @@ private:
     vector <vector<Sprite>> b;
     vector<vector<bool>> w, f;
     RenderWindow& window;
-    Mouse u;
     Texture tex, t;
     Sprite smile;
     Text text, text1;
